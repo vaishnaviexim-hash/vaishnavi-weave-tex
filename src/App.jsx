@@ -33,7 +33,7 @@ const Section = ({ id, title, subtitle, children }) => (
 )
 
 export default function App() {
-  // Form status for UX
+  // Enquiry form status
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'ok' | 'error'
 
   async function handleEnquirySubmit(e) {
@@ -87,6 +87,18 @@ export default function App() {
     { step: '3', title: 'Sampling', text: 'Lab dips & loom trials to lock quality and touch.' },
     { step: '4', title: 'Production', text: 'Optimized settings for stability, shrinkage & yield.' },
     { step: '5', title: 'Finishing', text: 'Setting, heat treatment, inspection & packing.' },
+  ]
+
+  // 🔶 Gallery images — put files in /public/gallery and update paths below
+  const gallery = [
+    { src: '/gallery/mesh-1.webp', alt: 'Athleisure mesh – 140 GSM' },
+    { src: '/gallery/mesh-2.webp', alt: 'Power-net – high recovery' },
+    { src: '/gallery/mesh-3.webp', alt: 'Spacer fabric – 3D structure' },
+    { src: '/gallery/mesh-4.webp', alt: 'Curtain net – jacquard motif' },
+    { src: '/gallery/mesh-5.webp', alt: 'Automotive seat mesh' },
+    { src: '/gallery/mesh-6.webp', alt: 'Filtration sleeve mesh' },
+    { src: '/gallery/mesh-7.webp', alt: 'Decor mesh – pattern A' },
+    { src: '/gallery/mesh-8.webp', alt: 'Decor mesh – pattern B' },
   ]
 
   return (
@@ -211,29 +223,27 @@ export default function App() {
           </div>
         </Section>
 
-        <Section id="process" title="How We Work" subtitle="A clear, collaborative flow for reliable outcomes.">
-          <div className="grid md:grid-cols-5 gap-4">
-            {process.map((p, i) => (
-              <div key={i} className="relative card">
-                <div className="card-body h-full">
-                  <div className="text-5xl font-bold text-slate-200 leading-none">{p.step}</div>
-                  <div className="mt-2 font-medium">{p.title}</div>
-                  <div className="text-sm text-slate-600 mt-1">{p.text}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        <Section id="gallery" title="Gallery" subtitle="Sample meshes and patterns (representative renders)">
+        {/* ✅ Real gallery using images from /public/gallery */}
+        <Section id="gallery" title="Gallery" subtitle="Sample meshes and patterns">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="aspect-square rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border shadow-inner" />
+            {gallery.map((img, i) => (
+              <a
+                key={i}
+                href={img.src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="aspect-square rounded-2xl border shadow-inner overflow-hidden"
+                title="Open full image"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </a>
             ))}
           </div>
-          <p className="text-xs text-center text-slate-500 mt-3">
-            Note: Replace placeholders with actual product photos later.
-          </p>
         </Section>
 
         <div className="bg-slate-900 text-white">
