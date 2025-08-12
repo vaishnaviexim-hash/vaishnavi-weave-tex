@@ -167,66 +167,66 @@ export default function App() {
               <div className="flex items-start gap-3 text-slate-700"><Phone className="h-4 w-4 mt-0.5" /><span>+91 7567400099</span></div>
               <div className="flex items-start gap-3 text-slate-700"><Mail className="h-4 w-4 mt-0.5" /><span>admin@vaishnaviweavetex.com</span></div>
             </div></div>
-            <div className="card md:col-span-2" id="enquire"><div className="card-body">
-              {!submitted ? (
-                <form
-  action="https://formspree.io/f/xjkolyjz"
-  method="POST"
-  className="grid md:grid-cols-2 gap-4"
->
-  <input
-    type="text"
-    name="name"
-    placeholder="Your Name"
-    required
-    className="border p-2"
-  />
-  <input
-    type="email"
-    name="email"
-    placeholder="Your Email"
-    required
-    className="border p-2"
-  />
-  <input
-    type="tel"
-    name="phone"
-    placeholder="Phone (optional)"
-    className="border p-2"
-  />
-  <textarea
-    name="message"
-    placeholder="Your Message"
-    required
-    className="border p-2 md:col-span-2"
-  ></textarea>
+           <div className="card md:col-span-2" id="enquire">
+  <div className="card-body">
+    <form
+      action="https://formspree.io/f/xjkolyjz"
+      method="POST"
+      className="grid md:grid-cols-2 gap-6"
+    >
+      <input
+        type="text"
+        name="name"
+        placeholder="Your Name"
+        required
+        className="w-full rounded-lg border p-2"
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Your Email"
+        required
+        className="w-full rounded-lg border p-2"
+      />
+      <input
+        type="tel"
+        name="phone"
+        placeholder="Phone (optional)"
+        className="w-full rounded-lg border p-2"
+      />
+      <textarea
+        name="message"
+        placeholder="Tell us about the fabric you need (GSM, width, end-use, target price)"
+        required
+        className="w-full rounded-lg border p-2 md:col-span-2"
+      />
+      {/* Spam trap */}
+      <input
+        type="text"
+        name="company"
+        style={{ display: "none" }}
+        tabIndex={-1}
+        autoComplete="off"
+      />
+      {/* Optional subject */}
+      <input
+        type="hidden"
+        name="_subject"
+        value="New Enquiry from Vaishnavi Weave Tex"
+      />
 
-  {/* Spam trap */}
-  <input
-    type="text"
-    name="company"
-    style={{ display: "none" }}
-    tabIndex="-1"
-    autoComplete="off"
-  />
+      <div className="md:col-span-2 flex items-center justify-between">
+        <div className="text-xs text-slate-500">
+          We’ll reply within 1 business day.
+        </div>
+        <button type="submit" className="btn btn-primary rounded-xl">
+          Send Enquiry
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
-  {/* Optional subject */}
-  <input
-    type="hidden"
-    name="_subject"
-    value="New Enquiry from Vaishnavi Weave Tex"
-  />
-
-  <button
-    type="submit"
-    className="bg-primary text-white px-4 py-2 rounded"
-  >
-    Send Enquiry
-  </button>
-</form>
-
-              ) : </div>
-          </div>
         </Section>
 
         <footer className="border-t">
