@@ -1,44 +1,12 @@
-<form action="https://formspree.io/f/xjkolyjz" method="POST">
-  <input type="text" name="name" placeholder="Your Name" required />
-  <input type="email" name="email" placeholder="Your Email" required />
-  <input type="tel" name="phone" placeholder="Phone (optional)" />
-  <textarea name="message" placeholder="Your Message" required></textarea>
-
-  <!-- Helpers -->
-  <input type="text" name="company" style="display:none" tabindex="-1" autocomplete="off" />
-  <input type="hidden" name="_subject" value="New Enquiry from Vaishnavi Weave Tex" />
-  <!-- Optional redirect after submit -->
-  <!-- <input type="hidden" name="_redirect" value="https://vaishnaviweavetex.com/thank-you.html" /> -->
-
-  <button type="submit">Send Enquiry</button>
-</form>
-<p id="formStatus" style="display:none;"></p>
-<script>
-  const form = document.querySelector('form[action="https://formspree.io/f/xjkolyjz"]');
-  const statusEl = document.getElementById('formStatus');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    statusEl.style.display = 'block';
-    statusEl.textContent = 'Sending...';
-
-    const data = Object.fromEntries(new FormData(form).entries());
-    if (data.company) return; // honeypot
-
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(form)
-      });
-      if (res.ok) {
-        statusEl.textContent = 'Thank you! Your enquiry has been sent.';
-        form.reset();
-      } else {
-        statusEl.textContent = 'Sorry, there was an error sending your message.';
-      }
-    } catch {
-      statusEl.textContent = 'Network error. Please try again.';
-    }
-  });
-</script>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vaishnavi Weave Tex LLP</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
