@@ -169,19 +169,63 @@ export default function App() {
             </div></div>
             <div className="card md:col-span-2" id="enquire"><div className="card-body">
               {!submitted ? (
-                <form className="grid md:grid-cols-2 gap-4" onSubmit={(e)=>{e.preventDefault(); if (canSubmit) setSubmitted(true);}}>
-                  <input name="name" placeholder="Your name" value={form.name} onChange={onChange} className="w-full rounded-lg border p-2" />
-                  <input name="company" placeholder="Company (optional)" onChange={onChange} className="w-full rounded-lg border p-2" />
-                  <input name="email" type="email" placeholder="Email" value={form.email} onChange={onChange} className="w-full rounded-lg border p-2" />
-                  <input name="phone" placeholder="Phone" value={form.phone} onChange={onChange} className="w-full rounded-lg border p-2" />
-                  <div className="md:col-span-2"><textarea name="message" placeholder="Tell us about the fabric you need (GSM, width, end-use, target price)" value={form.message} onChange={onChange} rows={5} className="w-full rounded-lg border p-2" /></div>
-                  <div className="md:col-span-2 flex items-center justify-between">
-                    <div className="text-xs text-slate-500">We’ll reply within 1 business day.</div>
-                    <button type="submit" disabled={!canSubmit} className="btn btn-primary rounded-xl disabled:opacity-40">Send Enquiry</button>
-                  </div>
-                </form>
-              ) : (<div className="p-6 rounded-xl bg-green-50 border border-green-200 text-green-800">Thanks! This demo stores nothing. Connect this form to your email/CRM to receive submissions.</div>)}
-            </div></div>
+                <form
+  action="https://formspree.io/f/xjkolyjz"
+  method="POST"
+  className="grid md:grid-cols-2 gap-4"
+>
+  <input
+    type="text"
+    name="name"
+    placeholder="Your Name"
+    required
+    className="border p-2"
+  />
+  <input
+    type="email"
+    name="email"
+    placeholder="Your Email"
+    required
+    className="border p-2"
+  />
+  <input
+    type="tel"
+    name="phone"
+    placeholder="Phone (optional)"
+    className="border p-2"
+  />
+  <textarea
+    name="message"
+    placeholder="Your Message"
+    required
+    className="border p-2 md:col-span-2"
+  ></textarea>
+
+  {/* Spam trap */}
+  <input
+    type="text"
+    name="company"
+    style={{ display: "none" }}
+    tabIndex="-1"
+    autoComplete="off"
+  />
+
+  {/* Optional subject */}
+  <input
+    type="hidden"
+    name="_subject"
+    value="New Enquiry from Vaishnavi Weave Tex"
+  />
+
+  <button
+    type="submit"
+    className="bg-primary text-white px-4 py-2 rounded"
+  >
+    Send Enquiry
+  </button>
+</form>
+
+              ) : </div>
           </div>
         </Section>
 
