@@ -33,7 +33,7 @@ const Section = ({ id, title, subtitle, children }) => (
 )
 
 export default function App() {
-  // Simple status for the enquiry form
+  // Form status for UX
   const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'ok' | 'error'
 
   async function handleEnquirySubmit(e) {
