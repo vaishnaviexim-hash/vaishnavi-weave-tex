@@ -1,20 +1,9 @@
 {
   "redirects": [
     {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.vaishnaviweavetex.com" }],
+      "source": "https://www.vaishnaviweavetex.com/:path*",
       "destination": "https://vaishnaviweavetex.com/:path*",
       "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/sitemap.xml",
-      "headers": [{ "key": "Content-Type", "value": "application/xml" }]
-    },
-    {
-      "source": "/robots.txt",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
     }
   ]
 }
