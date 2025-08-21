@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { motion, MotionConfig } from 'framer-motion'
-import { CheckCircle, Factory, Layers, Zap, Wrench, Shield, Phone, Mail, MapPin, ChevronRight } from 'lucide-react'
+import {
+  CheckCircle, Factory, Layers, Zap, Wrench, Shield, Phone, Mail, MapPin, ChevronRight,
+  IndianRupee, BadgeCheck, Truck, ShieldCheck, Ruler, ArrowRight, Award, Leaf, Recycle, Globe2
+} from 'lucide-react'
 
 const Feature = ({ icon, title, desc }) => (
   <div className="card">
@@ -39,33 +42,43 @@ export default function App() {
   async function handleEnquirySubmit(e) {
     e.preventDefault()
     setStatus('sending')
-
     const form = e.currentTarget
     const data = new FormData(form)
-
     // Honeypot (spam trap)
-    if (data.get('company')) {
-      setStatus('idle')
-      return
-    }
-
+    if (data.get('company')) { setStatus('idle'); return }
     try {
       const res = await fetch('https://formspree.io/f/xjkolyjz', {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: data
       })
-      if (res.ok) {
-        setStatus('ok')
-        form.reset()
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
+      if (res.ok) { setStatus('ok'); form.reset() } else { setStatus('error') }
+    } catch { setStatus('error') }
   }
 
+  // NEW: Import-substitute product lines
+  const products = [
+    {
+      title: 'Powernet',
+      badge: 'Import-substitute',
+      desc: 'High-recovery warp-knit mesh for lingerie, activewear and medical compression. Consistent modulus with soft hand-feel.',
+      specs: ['GSM: 120–220', 'Composition: Nylon/Spandex', 'Stretch: 2-way / 4-way', 'Width: 58–72 in']
+    },
+    {
+      title: 'Shapewear Fabrics',
+      badge: 'Make in India',
+      desc: 'Opaque, body-contouring fabrics engineered for sculpting garments. Excellent rebound and pilling resistance.',
+      specs: ['GSM: 180–320', 'Composition: Polyamide/Elastane', 'Finish: Brushed/Peach/Soft-Touch', 'Colors: Lab-matched']
+    },
+    {
+      title: 'Spacer (3D Air Mesh)',
+      badge: 'Breathable',
+      desc: 'Cushioned 3D warp-knit with airflow channels for footwear, backpacks, orthotics and protective gear.',
+      specs: ['GSM: 220–600', 'Thickness: 2–12 mm', 'Compression: Tunable', 'Width: up to 86 in']
+    },
+  ]
+
+  // Existing sections data
   const features = [
     { icon: <Layers className="h-6 w-6" />, title: 'Warp Knitting (EL)', desc: 'High-speed EL warp knitting for uniform mesh, nets & engineered fabrics.' },
     { icon: <Wrench className="h-6 w-6" />, title: 'Jacquard Integration', desc: 'Patterning flexibility with jacquard attachments for complex motifs.' },
@@ -81,15 +94,7 @@ export default function App() {
     { name: 'Industrial & Safety', points: ['Filtration meshes', 'Packaging sleeves', 'Reinforcement'] },
   ]
 
-  const process = [
-    { step: '1', title: 'Requirement Capture', text: 'GSM, hand-feel, width, color, end-use & target price.' },
-    { step: '2', title: 'Design & Yarn Selection', text: 'Guide bar plan, yarn counts, elastane %, denier/tex.' },
-    { step: '3', title: 'Sampling', text: 'Lab dips & loom trials to lock quality and touch.' },
-    { step: '4', title: 'Production', text: 'Optimized settings for stability, shrinkage & yield.' },
-    { step: '5', title: 'Finishing', text: 'Setting, heat treatment, inspection & packing.' },
-  ]
-
-  // 🔶 Gallery images — put files in /public/gallery and update paths below
+  // Gallery images — place files in /public/gallery
   const gallery = [
     { src: '/gallery/mesh-1.webp', alt: 'Athleisure mesh – 140 GSM' },
     { src: '/gallery/mesh-2.webp', alt: 'Power-net – high recovery' },
@@ -104,6 +109,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
+        {/* HEADER */}
         <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b bg-white/70">
           <div className="container-max h-16 flex items-center justify-between">
             <a href="#home" className="flex items-center gap-2">
@@ -114,9 +120,10 @@ export default function App() {
               </div>
             </a>
             <nav className="hidden md:flex items-center gap-6 text-sm">
+              <a href="#products" className="hover:text-slate-900 text-slate-600">Products</a>
               <a href="#capabilities" className="hover:text-slate-900 text-slate-600">Capabilities</a>
+              <a href="#advantages" className="hover:text-slate-900 text-slate-600">Why Us</a>
               <a href="#industries" className="hover:text-slate-900 text-slate-600">Industries</a>
-              <a href="#process" className="hover:text-slate-900 text-slate-600">Process</a>
               <a href="#gallery" className="hover:text-slate-900 text-slate-600">Gallery</a>
               <a href="#contact" className="hover:text-slate-900 text-slate-600">Contact</a>
               <a href="#enquire" className="btn btn-primary">Enquire</a>
@@ -124,27 +131,28 @@ export default function App() {
           </div>
         </header>
 
+        {/* HERO */}
         <section id="home" className="relative overflow-hidden">
           <div className="container-max py-20 md:py-28">
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div>
                 <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl md:text-5xl font-semibold tracking-tight">
-                  Precision EL Warp Knitting
+                  High-value, flexible producer for small-batch fashion & bulk technical contracts
                 </motion.h1>
                 <p className="mt-4 text-lg text-slate-600">
-                  We design and manufacture custom warp-knit meshes and nets with jacquard patterning — built for performance,
-                  consistency, and scale.
+                  India-made <strong>Powernet</strong>, <strong>Shapewear</strong> & <strong>Spacer</strong> fabrics engineered as reliable import substitutes —
+                  shorter lead times, stable pricing, and local service.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-3">
                   <a href="#enquire" className="btn btn-primary">Get a Quote</a>
-                  <a href="#capabilities" className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900">
-                    Explore capabilities <ChevronRight className="h-4 w-4" />
+                  <a href="#products" className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                    Explore products <ChevronRight className="h-4 w-4" />
                   </a>
                 </div>
                 <div className="mt-6 flex items-center gap-4 text-sm text-slate-500">
-                  <div className="badge"><CheckCircle className="h-4 w-4" /> Fast sampling</div>
-                  <div className="badge"><CheckCircle className="h-4 w-4" /> Consistent GSM</div>
-                  <div className="badge"><CheckCircle className="h-4 w-4" /> On-time delivery</div>
+                  <div className="badge"><Award className="h-4 w-4" /> ISO-oriented QA</div>
+                  <div className="badge"><Leaf className="h-4 w-4" /> REACH-aligned dyes</div>
+                  <div className="badge"><Recycle className="h-4 w-4" /> Recycled yarn options</div>
                 </div>
               </div>
 
@@ -170,6 +178,54 @@ export default function App() {
           </div>
         </section>
 
+        {/* WHY US */}
+        <Section id="advantages" title="Why Vaishnavi Weavetex" subtitle="Replace imports with dependable local supply.">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: <IndianRupee className="h-5 w-5" />, title: 'Landed Cost Advantage', desc: 'Cut duty & lead time vs China/Taiwan; stabilize FX risk.' },
+              { icon: <Truck className="h-5 w-5" />, title: 'Fast Lead Times', desc: 'Proto in 5–7 days; production 2–4 weeks depending on spec.' },
+              { icon: <BadgeCheck className="h-5 w-5" />, title: 'Flexible MOQs', desc: 'Small-batch fashion (100–300 m/col) to bulk technical contracts.' },
+              { icon: <ShieldCheck className="h-5 w-5" />, title: 'Quality Assurance', desc: 'Inline inspection, batch traceability, and retained swatches.' },
+            ].map((a, i) => (
+              <div key={i} className="p-5 rounded-2xl ring-1 ring-slate-200 bg-white">
+                <div className="flex items-center gap-2 text-emerald-700">
+                  {a.icon}<span className="font-medium">{a.title}</span>
+                </div>
+                <p className="mt-2 text-sm text-slate-600">{a.desc}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* PRODUCTS */}
+        <Section id="products" title="Core Import-Substitute Lines" subtitle="Spec-matched to popular imports, tuned for your GSM, stretch and finish.">
+          <div className="grid md:grid-cols-3 gap-6">
+            {products.map((p, i) => (
+              <div key={i} className="rounded-2xl bg-white ring-1 ring-slate-200 overflow-hidden">
+                <div className="p-5">
+                  <span className="inline-flex text-[11px] px-2 py-1 rounded-full bg-blue-100 text-blue-800">{p.badge}</span>
+                  <h3 className="mt-3 text-lg font-semibold">{p.title}</h3>
+                  <p className="mt-1 text-sm text-slate-600">{p.desc}</p>
+                  <ul className="mt-3 space-y-1 text-sm text-slate-600">
+                    {p.specs.map((s, j) => (
+                      <li key={j} className="flex items-center gap-2"><Ruler className="w-4 h-4 text-slate-400" /> {s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="px-5 pb-5">
+                  <a href="#enquire" className="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:text-emerald-800">
+                    Request tech sheet <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-sm text-slate-600 text-center">
+            Need custom modulus, shade, or finish? We’ll tune structure, yarn and finishing to your spec.
+          </div>
+        </Section>
+
+        {/* CAPABILITIES (unchanged content, styled) */}
         <Section id="capabilities" title="Capabilities" subtitle="From concept to continuous production, we deliver stable, repeatable quality.">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, idx) => (
@@ -191,7 +247,7 @@ export default function App() {
               <div className="card-body">
                 <div className="text-lg font-medium mb-2">Widths & GSM</div>
                 <div className="text-sm text-slate-600 space-y-2">
-                  <p>Typical width: 36&quot;–72&quot; (others on request)</p>
+                  <p>Typical width: 36″–72″ (others on request)</p>
                   <p>GSM: 40–300 depending on construction and yarn mix.</p>
                 </div>
               </div>
@@ -208,6 +264,7 @@ export default function App() {
           </div>
         </Section>
 
+        {/* INDUSTRIES */}
         <Section id="industries" title="Industries & Applications" subtitle="We tailor constructions for performance across categories.">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {industries.map((it, i) => (
@@ -223,36 +280,23 @@ export default function App() {
           </div>
         </Section>
 
-        {/* ✅ Real gallery using images from /public/gallery */}
+        {/* GALLERY */}
         <Section id="gallery" title="Gallery" subtitle="Sample meshes and patterns">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {gallery.map((img, i) => (
-              <a
-                key={i}
-                href={img.src}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="aspect-square rounded-2xl border shadow-inner overflow-hidden"
-                title="Open full image"
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
+              <a key={i} href={img.src} target="_blank" rel="noopener noreferrer" className="aspect-square rounded-2xl border shadow-inner overflow-hidden" title="Open full image">
+                <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover" />
               </a>
             ))}
           </div>
         </Section>
 
+        {/* CTA STRIP */}
         <div className="bg-slate-900 text-white">
           <div className="container-max py-10 md:py-12 grid md:grid-cols-2 gap-6 items-center">
             <div>
-              <h3 className="text-2xl font-semibold">Have a fabric in mind?</h3>
-              <p className="text-slate-300 mt-1">
-                Share your GSM, width and end-use — we'll revert with a quick feasibility and timeline.
-              </p>
+              <h3 className="text-2xl font-semibold">Replace imports with dependable local supply</h3>
+              <p className="text-slate-300 mt-1">Get spec-matched samples and pricing for your next drop or contract.</p>
             </div>
             <div className="flex md:justify-end">
               <a href="#enquire" className="btn bg-white text-slate-900 hover:opacity-90 rounded-xl">Start an Enquiry</a>
@@ -260,6 +304,7 @@ export default function App() {
           </div>
         </div>
 
+        {/* CONTACT + ENQUIRY (your Formspree kept) */}
         <Section id="contact" title="Contact" subtitle="Reach out for sampling, quotations, or collaborations.">
           <div className="grid md:grid-cols-3 gap-6">
             <div className="card">
@@ -285,7 +330,6 @@ export default function App() {
             {/* Enquiry Card */}
             <div className="card md:col-span-2" id="enquire">
               <div className="card-body">
-                {/* Success / error banners */}
                 {status === 'ok' && (
                   <div className="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800">
                     Thank you! Your enquiry has been sent.
@@ -298,51 +342,17 @@ export default function App() {
                 )}
 
                 <form onSubmit={handleEnquirySubmit} className="grid md:grid-cols-2 gap-6">
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Your Name"
-                    required
-                    className="w-full rounded-lg border p-2"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Your Email"
-                    required
-                    className="w-full rounded-lg border p-2"
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone (optional)"
-                    className="w-full rounded-lg border p-2"
-                  />
-                  <textarea
-                    name="message"
-                    placeholder="Tell us about the fabric you need (GSM, width, end-use, target price)"
-                    required
-                    className="w-full rounded-lg border p-2 md:col-span-2"
-                  />
+                  <input type="text" name="name" placeholder="Your Name" required className="w-full rounded-lg border p-2" />
+                  <input type="email" name="email" placeholder="Your Email" required className="w-full rounded-lg border p-2" />
+                  <input type="tel" name="phone" placeholder="Phone (optional)" className="w-full rounded-lg border p-2" />
+                  <textarea name="message" placeholder="Tell us about the fabric you need (GSM, width, end-use, target price)" required className="w-full rounded-lg border p-2 md:col-span-2" />
 
                   {/* Spam trap */}
-                  <input
-                    type="text"
-                    name="company"
-                    style={{ display: 'none' }}
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
+                  <input type="text" name="company" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
 
                   <div className="md:col-span-2 flex items-center justify-between">
-                    <div className="text-xs text-slate-500">
-                      We’ll reply within 1 business day.
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary rounded-xl"
-                      disabled={status === 'sending'}
-                    >
+                    <div className="text-xs text-slate-500">We’ll reply within 1 business day.</div>
+                    <button type="submit" className="btn btn-primary rounded-xl" disabled={status === 'sending'}>
                       {status === 'sending' ? 'Sending…' : 'Send Enquiry'}
                     </button>
                   </div>
@@ -352,6 +362,7 @@ export default function App() {
           </div>
         </Section>
 
+        {/* FOOTER */}
         <footer className="border-t">
           <div className="container-max py-10 text-sm text-slate-600 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
             <div>
@@ -359,9 +370,9 @@ export default function App() {
               Automotive Textiles, Curtains, Shoe Fabric, Shirts, Garments.
             </div>
             <div className="flex items-center gap-4">
+              <a href="#products" className="hover:text-slate-900">Products</a>
               <a href="#capabilities" className="hover:text-slate-900">Capabilities</a>
               <a href="#industries" className="hover:text-slate-900">Industries</a>
-              <a href="#process" className="hover:text-slate-900">Process</a>
               <a href="#contact" className="hover:text-slate-900">Contact</a>
             </div>
           </div>
