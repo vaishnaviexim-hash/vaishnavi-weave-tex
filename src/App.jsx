@@ -1,20 +1,20 @@
 import React, { useMemo, useState } from "react"
 import { motion } from "framer-motion"
-import { Factory, Layers, Zap, GaugeCircle, Boxes, Grid, Phone, Mail, MapPin, CheckCircle2, ChevronRight, Search, Filter, ShoppingCart, FileText, Rocket } from "lucide-react"
+import { Factory, Layers, Zap, GaugeCircle, Grid, Phone, Mail, MapPin, CheckCircle2, ChevronRight, Search, Filter, ShoppingCart, FileText, Rocket, Check, XCircle } from "lucide-react"
 
 /**
- * App.jsx — Merge‑ready version for Vaishnavi Weave Tex (Vite + Tailwind)
+ * App.jsx — Consolidated version with working Formspree + inline success message
  * ----------------------------------------------------------------------------
  * ✅ Drop‑in replacement for src/App.jsx
- * ✅ Keeps your navy/emerald brand aesthetic
- * ✅ Adds searchable Product Catalog (EL Tricot), Capability, RFQ, and Contact
+ * ✅ Navy/Emerald brand aesthetic
+ * ✅ Searchable product catalog for EL Tricot
+ * ✅ Capability, RFQ (Formspree endpoint wired), Contact
+ * ✅ Inline success/error status (no redirect)
  *
  * HOW TO USE
- * 1) Replace src/App.jsx with this file and save.
- * 2) Update CONTACT + Formspree ID.
- * 3) Ensure you have framer-motion & lucide-react installed:
- *    npm i framer-motion lucide-react
- * 4) Tailwind already present in your project from earlier steps.
+ * 1) Replace src/App.jsx with this file.
+ * 2) npm i framer-motion lucide-react
+ * 3) Update CONTACT details below.
  */
 
 // ---- Brand Config ----
@@ -25,6 +25,9 @@ const BRAND = {
   brandAccent: "#1FA97A",  // emerald
   brandSoft: "#EEF5FF",
 }
+
+// ---- Formspree Endpoint ----
+const FORM_ENDPOINT = "https://formspree.io/f/xzzadowb" // ← live endpoint from your screenshot
 
 // ---- Product Taxonomy (EL Tricot) ----
 const CATEGORIES = [
@@ -90,8 +93,8 @@ const SPECS = [
 ]
 
 const CONTACT = {
-  phone: "+91‑XXXXXXXXXX",   // ← update
-  email: "hello@vaishnaviweavetex.com", // ← update
+  phone: "+91‑7567400099",   // ← update
+  email: "admin@vaishnaviweavetex.com", // ← update
   address: "Icchapore GIDC, Surat, Gujarat, India",
 }
 
@@ -118,40 +121,65 @@ const SectionTitle = ({ icon, title, subtitle }) => (
   </div>
 )
 
-const ProductCard = ({ item }) => (
-  <Card className="p-4">
-    <div className="flex items-start justify-between gap-3">
-      <div>
-        <h4 className="font-semibold text-slate-900">{item.name}</h4>
-        <p className="text-sm text-slate-600 mt-1">{item.spec}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {item.tags.map((t,i) => <Tag key={i}>{t}</Tag>)}
-        </div>
-      </div>
-      <div className="h-14 w-14 shrink-0 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 grid place-items-center">
-        <Grid className="h-6 w-6 text-slate-500" />
-      </div>
-    </div>
-  </Card>
-)
+// ---- RFQ (with inline success/error, no redirect) ----
+const RFQ = () => {
+  const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-const RFQ = () => (
-  <Card className="p-6" id="enquire">
-    <SectionTitle icon={<FileText className="h-5 w-5 text-slate-700" />} title="Request a Quote (RFQ)" subtitle="Tell us your target application and key parameters. We'll revert with feasibility and MOQs." />
-    {/* Replace with your real Formspree endpoint */}
-    <form action="https://formspree.io/f/your_form_id" method="POST" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <input name="name" required placeholder="Full name" className="input" />
-      <input name="email" required type="email" placeholder="Work email" className="input" />
-      <input name="company" placeholder="Company" className="input" />
-      <input name="phone" placeholder="Phone / WhatsApp" className="input" />
-      <input name="application" placeholder="Application (e.g., shapewear, headliner, spacer)" className="input md:col-span-2" />
-      <textarea name="specs" placeholder="GSM, composition, width, color, stretch %, finish, monthly volume…" rows={4} className="textarea md:col-span-2" />
-      <button className="btn md:col-span-2" type="submit">
-        <ShoppingCart className="h-4 w-4 mr-2" /> Submit RFQ
-      </button>
-    </form>
-  </Card>
-)
+  async function handleSubmit(e){
+    e.preventDefault()
+    setLoading(true); setError("")
+    const form = e.currentTarget
+    const data = new FormData(form)
+    try {
+      const res = await fetch(FORM_ENDPOINT, { method: "POST", headers: { Accept: "application/json" }, body: data })
+      if (res.ok) { setSent(true); form.reset() }
+      else {
+        const j = await res.json().catch(()=>({}))
+        setError(j?.errors?.[0]?.message || "Submission failed. Please try again.")
+      }
+    } catch (err) {
+      setError("Network error. Check connection and try again.")
+    } finally { setLoading(false) }
+  }
+
+  return (
+    <Card className="p-6" id="enquire">
+      <SectionTitle icon={<FileText className="h-5 w-5 text-slate-700" />} title="Request a Quote (RFQ)" subtitle="Tell us your target application and key parameters. We'll revert with feasibility and MOQs." />
+
+      {sent ? (
+        <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+          <Check className="h-5 w-5"/>
+          <div>
+            <div className="font-medium">Thanks! Your request is in.</div>
+            <div className="text-sm">We usually respond within one business day.</div>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* a simple honeypot to reduce spam */}
+          <input type="text" name="_gotcha" className="hidden" tabIndex="-1" autoComplete="off" />
+
+          <input name="name" required placeholder="Full name" className="input" />
+          <input name="email" required type="email" placeholder="Work email" className="input" />
+          <input name="company" placeholder="Company" className="input" />
+          <input name="phone" placeholder="Phone / WhatsApp" className="input" />
+          <input name="application" placeholder="Application (e.g., shapewear, headliner, spacer)" className="input md:col-span-2" />
+          <textarea name="specs" placeholder="GSM, composition, width, color, stretch %, finish, monthly volume…" rows={4} className="textarea md:col-span-2" />
+          <button className="btn md:col-span-2" type="submit" disabled={loading}>
+            <ShoppingCart className="h-4 w-4 mr-2" /> {loading ? "Submitting…" : "Submit RFQ"}
+          </button>
+          {error && (
+            <div className="md:col-span-2 flex items-start gap-2 text-red-700 bg-red-50 border border-red-200 rounded-xl p-3">
+              <XCircle className="h-4 w-4"/> <span className="text-sm">{error}</span>
+            </div>
+          )}
+        </form>
+      )}
+    </Card>
+  )
+}
 
 // ---- App ----
 export default function App() {
@@ -189,7 +217,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Hero (replace with your existing hero if desired) */}
+      {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 py-14 md:py-20">
           <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -351,6 +379,7 @@ export default function App() {
       <style>{`
         .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.625rem 1rem;border:1px solid ${BRAND.brandPrimary}20;background:${BRAND.brandPrimary};color:white;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.06)}
         .btn:hover{opacity:.95}
+        .btn[disabled]{opacity:.6;cursor:not-allowed}
         .btn-outline{background:transparent;color:${BRAND.brandPrimary};border-color:${BRAND.brandPrimary}33}
         .input,.textarea{border:1px solid rgb(226 232 240);border-radius:1rem;padding:.625rem .875rem;outline:none;width:100%;background:white}
         .input:focus,.textarea:focus{border-color:${BRAND.brandAccent}}
