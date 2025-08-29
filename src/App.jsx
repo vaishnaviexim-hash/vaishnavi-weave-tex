@@ -2,7 +2,22 @@ import React, { useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import { Factory, Layers, Zap, GaugeCircle, Boxes, Grid, Phone, Mail, MapPin, CheckCircle2, ChevronRight, Search, Filter, ShoppingCart, FileText, Rocket } from "lucide-react"
 
-// ---- Config ----
+/**
+ * App.jsx — Merge‑ready version for Vaishnavi Weave Tex (Vite + Tailwind)
+ * ----------------------------------------------------------------------------
+ * ✅ Drop‑in replacement for src/App.jsx
+ * ✅ Keeps your navy/emerald brand aesthetic
+ * ✅ Adds searchable Product Catalog (EL Tricot), Capability, RFQ, and Contact
+ *
+ * HOW TO USE
+ * 1) Replace src/App.jsx with this file and save.
+ * 2) Update CONTACT + Formspree ID.
+ * 3) Ensure you have framer-motion & lucide-react installed:
+ *    npm i framer-motion lucide-react
+ * 4) Tailwind already present in your project from earlier steps.
+ */
+
+// ---- Brand Config ----
 const BRAND = {
   name: "Vaishnavi Weave Tex LLP",
   tagline: "Import‑substitute warp‑knit fabrics | Powernet • Shapewear • Spacer | India‑made",
@@ -11,7 +26,7 @@ const BRAND = {
   brandSoft: "#EEF5FF",
 }
 
-// Product taxonomy for EL Tricot (3–6 bars; highlight 4‑bar EL)
+// ---- Product Taxonomy (EL Tricot) ----
 const CATEGORIES = [
   {
     key: "apparel",
@@ -75,11 +90,12 @@ const SPECS = [
 ]
 
 const CONTACT = {
-  phone: "+91‑XXXXXXXXXX",
-  email: "hello@vaishnaviweavetex.com",
+  phone: "+91‑XXXXXXXXXX",   // ← update
+  email: "hello@vaishnaviweavetex.com", // ← update
   address: "Icchapore GIDC, Surat, Gujarat, India",
 }
 
+// ---- UI Primitives ----
 const Tag = ({ children }) => (
   <span className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium border-slate-300/60 bg-white/60 backdrop-blur">
     {children}
@@ -122,6 +138,7 @@ const ProductCard = ({ item }) => (
 const RFQ = () => (
   <Card className="p-6" id="enquire">
     <SectionTitle icon={<FileText className="h-5 w-5 text-slate-700" />} title="Request a Quote (RFQ)" subtitle="Tell us your target application and key parameters. We'll revert with feasibility and MOQs." />
+    {/* Replace with your real Formspree endpoint */}
     <form action="https://formspree.io/f/your_form_id" method="POST" className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <input name="name" required placeholder="Full name" className="input" />
       <input name="email" required type="email" placeholder="Work email" className="input" />
@@ -136,6 +153,7 @@ const RFQ = () => (
   </Card>
 )
 
+// ---- App ----
 export default function App() {
   const [q, setQ] = useState("")
   const filtered = useMemo(() => {
@@ -171,7 +189,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero (replace with your existing hero if desired) */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 py-14 md:py-20">
           <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -329,7 +347,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Tailwind‑style utility presets for inputs/buttons */}
+      {/* Minimal utility styles for inputs/buttons */}
       <style>{`
         .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.625rem 1rem;border:1px solid ${BRAND.brandPrimary}20;background:${BRAND.brandPrimary};color:white;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.06)}
         .btn:hover{opacity:.95}
