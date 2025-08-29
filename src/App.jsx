@@ -1,383 +1,342 @@
-import React, { useState } from 'react'
-import { motion, MotionConfig } from 'framer-motion'
-import {
-  CheckCircle, Factory, Layers, Zap, Wrench, Shield, Phone, Mail, MapPin, ChevronRight,
-  IndianRupee, BadgeCheck, Truck, ShieldCheck, Ruler, ArrowRight, Award, Leaf, Recycle, Globe2
-} from 'lucide-react'
+import React, { useMemo, useState } from "react"
+import { motion } from "framer-motion"
+import { Factory, Layers, Zap, GaugeCircle, Boxes, Grid, Phone, Mail, MapPin, CheckCircle2, ChevronRight, Search, Filter, ShoppingCart, FileText, Rocket } from "lucide-react"
 
-const Feature = ({ icon, title, desc }) => (
-  <div className="card">
-    <div className="card-body">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-xl bg-slate-100">{icon}</div>
-        <div className="text-lg font-medium">{title}</div>
-      </div>
-      <p className="text-slate-600 text-sm">{desc}</p>
-    </div>
+// ---- Config ----
+const BRAND = {
+  name: "Vaishnavi Weave Tex LLP",
+  tagline: "Import‑substitute warp‑knit fabrics | Powernet • Shapewear • Spacer | India‑made",
+  brandPrimary: "#0B2447", // navy
+  brandAccent: "#1FA97A",  // emerald
+  brandSoft: "#EEF5FF",
+}
+
+// Product taxonomy for EL Tricot (3–6 bars; highlight 4‑bar EL)
+const CATEGORIES = [
+  {
+    key: "apparel",
+    title: "Apparel & Intimates",
+    blurb: "Soft hand‑feel, controlled stretch & recovery, lingerie‑grade surfaces.",
+    items: [
+      { name: "Powernet (Control/Support)", spec: "Nylon/Spandex • 120–280 gsm • 20–35% elongation", tags: ["apparel","stretch","support"] },
+      { name: "Shapewear Tricot", spec: "Fine gauge • smooth face • brushed back (optional)", tags: ["apparel","shapewear"] },
+      { name: "Lingerie Lining Tricot", spec: "E28–E36 fine hand • dyeable", tags: ["apparel","lingerie"] },
+      { name: "Sports Mesh (Micro‑mesh)", spec: "Breathable • moisture management", tags: ["sports","mesh"] },
+    ],
+  },
+  {
+    key: "performance",
+    title: "Performance & Footwear",
+    blurb: "High breathability meshes and structured bases for lamination.",
+    items: [
+      { name: "Shoe Upper Mesh", spec: "Engineered apertures • laminate‑ready", tags: ["footwear","mesh"] },
+      { name: "Backpack / Luggage Mesh", spec: "Tear‑resistant • abrasion resistant", tags: ["bags","mesh"] },
+      { name: "Spacer (3D) — Light", spec: "3–5 mm loft • air‑flow • cushioning", tags: ["spacer","3D"] },
+      { name: "Spacer (3D) — Medium", spec: "6–10 mm loft • body‑contact comfort", tags: ["spacer","3D"] },
+    ],
+  },
+  {
+    key: "home",
+    title: "Home & Upholstery",
+    blurb: "Tulle, curtain net, sofa velvet and decorative textures made fast with EL lapping.",
+    items: [
+      { name: "Tulle / Curtain Net", spec: "Stable apertures • drape", tags: ["home","net"] },
+      { name: "Sofa Velvet (Turtle / Suede effect)", spec: "Plush touch • embossable", tags: ["home","velvet"] },
+      { name: "Crinkle / Bubble Textures", spec: "EL‑patterned surfaces • dimensional", tags: ["home","texture"] },
+    ],
+  },
+  {
+    key: "auto",
+    title: "Automotive & Mobility",
+    blurb: "Consistent quality bases for lamination, headliner, seat internals, trims.",
+    items: [
+      { name: "Headliner Base Tricot", spec: "Uniform lay • foam/film lamination", tags: ["auto","lamination"] },
+      { name: "Seat Spacer / Ventilation", spec: "3D cushioning • airflow", tags: ["auto","spacer"] },
+      { name: "Trims & Acoustic Nets", spec: "Controlled porosity • NVH tuning", tags: ["auto","mesh"] },
+    ],
+  },
+  {
+    key: "industrial",
+    title: "Industrial & Medical",
+    blurb: "Technical bases for coatings, composites, strapping and bandaging.",
+    items: [
+      { name: "Coating/Lamination Base", spec: "Smooth face • good dimensional stability", tags: ["industrial","lamination"] },
+      { name: "Reinforcement Mesh", spec: "Open structure • resin compatible", tags: ["industrial","mesh"] },
+      { name: "Medical Elastic Bandage Base", spec: "Skin‑friendly • calibrated stretch", tags: ["medical","elastic"] },
+    ],
+  },
+]
+
+const SPECS = [
+  { label: "Guide Bars", value: "4‑bar EL (3–6 bars available)" },
+  { label: "Gauges", value: "E28–E36 typical (others on request)" },
+  { label: "Widths", value: "≈ 180–300+ inches working width" },
+  { label: "Capabilities", value: "EL electronic lapping • meshes • textures • spacer" },
+]
+
+const CONTACT = {
+  phone: "+91‑XXXXXXXXXX",
+  email: "hello@vaishnaviweavetex.com",
+  address: "Icchapore GIDC, Surat, Gujarat, India",
+}
+
+const Tag = ({ children }) => (
+  <span className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium border-slate-300/60 bg-white/60 backdrop-blur">
+    {children}
+  </span>
+)
+
+const Card = ({ children, className = "" }) => (
+  <div className={`rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow ${className}`}>
+    {children}
   </div>
 )
 
-const Section = ({ id, title, subtitle, children }) => (
-  <section id={id} className="scroll-mt-24 py-16 md:py-24">
-    <div className="container-max">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.6 }}
-        className="mb-10 text-center"
-      >
-        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">{title}</h2>
-        {subtitle && <p className="mt-3 text-slate-600 max-w-3xl mx-auto">{subtitle}</p>}
-      </motion.div>
-      {children}
+const SectionTitle = ({ icon, title, subtitle }) => (
+  <div className="mb-6">
+    <div className="flex items-center gap-2 text-slate-900">
+      {icon}
+      <h2 className="text-xl md:text-2xl font-semibold">{title}</h2>
     </div>
-  </section>
+    {subtitle && <p className="text-slate-600 mt-1">{subtitle}</p>}
+  </div>
+)
+
+const ProductCard = ({ item }) => (
+  <Card className="p-4">
+    <div className="flex items-start justify-between gap-3">
+      <div>
+        <h4 className="font-semibold text-slate-900">{item.name}</h4>
+        <p className="text-sm text-slate-600 mt-1">{item.spec}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {item.tags.map((t,i) => <Tag key={i}>{t}</Tag>)}
+        </div>
+      </div>
+      <div className="h-14 w-14 shrink-0 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 grid place-items-center">
+        <Grid className="h-6 w-6 text-slate-500" />
+      </div>
+    </div>
+  </Card>
+)
+
+const RFQ = () => (
+  <Card className="p-6" id="enquire">
+    <SectionTitle icon={<FileText className="h-5 w-5 text-slate-700" />} title="Request a Quote (RFQ)" subtitle="Tell us your target application and key parameters. We'll revert with feasibility and MOQs." />
+    <form action="https://formspree.io/f/your_form_id" method="POST" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input name="name" required placeholder="Full name" className="input" />
+      <input name="email" required type="email" placeholder="Work email" className="input" />
+      <input name="company" placeholder="Company" className="input" />
+      <input name="phone" placeholder="Phone / WhatsApp" className="input" />
+      <input name="application" placeholder="Application (e.g., shapewear, headliner, spacer)" className="input md:col-span-2" />
+      <textarea name="specs" placeholder="GSM, composition, width, color, stretch %, finish, monthly volume…" rows={4} className="textarea md:col-span-2" />
+      <button className="btn md:col-span-2" type="submit">
+        <ShoppingCart className="h-4 w-4 mr-2" /> Submit RFQ
+      </button>
+    </form>
+  </Card>
 )
 
 export default function App() {
-  // Enquiry form status
-  const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'ok' | 'error'
-
-  async function handleEnquirySubmit(e) {
-    e.preventDefault()
-    setStatus('sending')
-    const form = e.currentTarget
-    const data = new FormData(form)
-    // Honeypot (spam trap)
-    if (data.get('company')) { setStatus('idle'); return }
-    try {
-      const res = await fetch('https://formspree.io/f/xjkolyjz', {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: data
-      })
-      if (res.ok) { setStatus('ok'); form.reset() } else { setStatus('error') }
-    } catch { setStatus('error') }
-  }
-
-  // NEW: Import-substitute product lines
-  const products = [
-    {
-      title: 'Powernet',
-      badge: 'Import-substitute',
-      desc: 'High-recovery warp-knit mesh for lingerie, activewear and medical compression. Consistent modulus with soft hand-feel.',
-      specs: ['GSM: 120–220', 'Composition: Nylon/Spandex', 'Stretch: 2-way / 4-way', 'Width: 58–72 in']
-    },
-    {
-      title: 'Shapewear Fabrics',
-      badge: 'Make in India',
-      desc: 'Opaque, body-contouring fabrics engineered for sculpting garments. Excellent rebound and pilling resistance.',
-      specs: ['GSM: 180–320', 'Composition: Polyamide/Elastane', 'Finish: Brushed/Peach/Soft-Touch', 'Colors: Lab-matched']
-    },
-    {
-      title: 'Spacer (3D Air Mesh)',
-      badge: 'Breathable',
-      desc: 'Cushioned 3D warp-knit with airflow channels for footwear, backpacks, orthotics and protective gear.',
-      specs: ['GSM: 220–600', 'Thickness: 2–12 mm', 'Compression: Tunable', 'Width: up to 86 in']
-    },
-  ]
-
-  // Existing sections data
-  const features = [
-    { icon: <Layers className="h-6 w-6" />, title: 'Warp Knitting (EL)', desc: 'High-speed EL warp knitting for uniform mesh, nets & engineered fabrics.' },
-    { icon: <Wrench className="h-6 w-6" />, title: 'Jacquard Integration', desc: 'Patterning flexibility with jacquard attachments for complex motifs.' },
-    { icon: <Zap className="h-6 w-6" />, title: 'Rapid Development', desc: 'Quick sampling to production with agile design-to-loom workflow.' },
-    { icon: <Shield className="h-6 w-6" />, title: 'Quality Focus', desc: 'Inline checks for GSM, dimensional stability & defect control.' },
-  ]
-
-  const industries = [
-    { name: 'Athleisure & Sportswear', points: ['Breathable meshes', 'Power-net', 'Spacer fabrics'] },
-    { name: 'Automotive & Seating', points: ['Seat support meshes', 'Headliner substrates'] },
-    { name: 'Medical & Care', points: ['Elastic bandages', 'Support meshes (non-sterile)'] },
-    { name: 'Home & Interiors', points: ['Curtain nets', 'Decor meshes', 'Organizers'] },
-    { name: 'Industrial & Safety', points: ['Filtration meshes', 'Packaging sleeves', 'Reinforcement'] },
-  ]
-
-  // Gallery images — place files in /public/gallery
-  const gallery = [
-    { src: '/gallery/mesh-1.webp', alt: 'Athleisure mesh – 140 GSM' },
-    { src: '/gallery/mesh-2.webp', alt: 'Power-net – high recovery' },
-    { src: '/gallery/mesh-3.webp', alt: 'Spacer fabric – 3D structure' },
-    { src: '/gallery/mesh-4.webp', alt: 'Curtain net – jacquard motif' },
-    { src: '/gallery/mesh-5.webp', alt: 'Automotive seat mesh' },
-    { src: '/gallery/mesh-6.webp', alt: 'Filtration sleeve mesh' },
-    { src: '/gallery/mesh-7.webp', alt: 'Decor mesh – pattern A' },
-    { src: '/gallery/mesh-8.webp', alt: 'Decor mesh – pattern B' },
-  ]
+  const [q, setQ] = useState("")
+  const filtered = useMemo(() => {
+    if (!q.trim()) return CATEGORIES
+    const t = q.toLowerCase()
+    return CATEGORIES.map(cat => ({
+      ...cat,
+      items: cat.items.filter(it => (it.name+it.spec+it.tags.join(" ")).toLowerCase().includes(t))
+    })).filter(cat => cat.items.length)
+  }, [q])
 
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
-        {/* HEADER */}
-        <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b bg-white/70">
-          <div className="container-max h-16 flex items-center justify-between">
-            <a href="#home" className="flex items-center gap-2">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white font-bold">VW</span>
-              <div className="leading-tight">
-                <div className="font-semibold">Vaishnavi Weave Tex LLP</div>
-                <div className="text-xs text-slate-500">Engineered Warp-Knit Fabrics</div>
-              </div>
-            </a>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
-              <a href="#products" className="hover:text-slate-900 text-slate-600">Products</a>
-              <a href="#capabilities" className="hover:text-slate-900 text-slate-600">Capabilities</a>
-              <a href="#advantages" className="hover:text-slate-900 text-slate-600">Why Us</a>
-              <a href="#industries" className="hover:text-slate-900 text-slate-600">Industries</a>
-              <a href="#gallery" className="hover:text-slate-900 text-slate-600">Gallery</a>
-              <a href="#contact" className="hover:text-slate-900 text-slate-600">Contact</a>
-              <a href="#enquire" className="btn btn-primary">Enquire</a>
-            </nav>
-          </div>
-        </header>
-
-        {/* HERO */}
-        <section id="home" className="relative overflow-hidden">
-          <div className="container-max py-20 md:py-28">
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
-                <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl md:text-5xl font-semibold tracking-tight">
-                  High-value, flexible producer for small-batch fashion & bulk technical contracts
-                </motion.h1>
-                <p className="mt-4 text-lg text-slate-600">
-                  India-made <strong>Powernet</strong>, <strong>Shapewear</strong> & <strong>Spacer</strong> fabrics engineered as reliable import substitutes —
-                  shorter lead times, stable pricing, and local service.
-                </p>
-                <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <a href="#enquire" className="btn btn-primary">Get a Quote</a>
-                  <a href="#products" className="inline-flex items-center gap-2 text-slate-700 hover:text-slate-900">
-                    Explore products <ChevronRight className="h-4 w-4" />
-                  </a>
-                </div>
-                <div className="mt-6 flex items-center gap-4 text-sm text-slate-500">
-                  <div className="badge"><Award className="h-4 w-4" /> ISO-oriented QA</div>
-                  <div className="badge"><Leaf className="h-4 w-4" /> REACH-aligned dyes</div>
-                  <div className="badge"><Recycle className="h-4 w-4" /> Recycled yarn options</div>
-                </div>
-              </div>
-
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} className="relative">
-                <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-slate-200 to-slate-50 shadow-xl ring-1 ring-black/5 p-1">
-                  <div className="h-full w-full rounded-2xl bg-[radial-gradient(ellipse_at_top_right,theme(colors.slate.100),theme(colors.slate.200))] flex items-center justify-center">
-                    <div className="grid grid-cols-3 gap-2 p-6">
-                      {Array.from({ length: 18 }).map((_, i) => (
-                        <div key={i} className="h-14 w-24 rounded-lg bg-white/70 shadow-inner border border-slate-200" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-lg border p-4 flex items-center gap-3">
-                  <Factory className="h-6 w-6" />
-                  <div>
-                    <div className="text-sm font-medium">In-house sampling</div>
-                    <div className="text-xs text-slate-500">Rapid prototyping to production</div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* WHY US */}
-        <Section id="advantages" title="Why Vaishnavi Weavetex" subtitle="Replace imports with dependable local supply.">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: <IndianRupee className="h-5 w-5" />, title: 'Landed Cost Advantage', desc: 'Cut duty & lead time vs China/Taiwan; stabilize FX risk.' },
-              { icon: <Truck className="h-5 w-5" />, title: 'Fast Lead Times', desc: 'Proto in 5–7 days; production 2–4 weeks depending on spec.' },
-              { icon: <BadgeCheck className="h-5 w-5" />, title: 'Flexible MOQs', desc: 'Small-batch fashion (100–300 m/col) to bulk technical contracts.' },
-              { icon: <ShieldCheck className="h-5 w-5" />, title: 'Quality Assurance', desc: 'Inline inspection, batch traceability, and retained swatches.' },
-            ].map((a, i) => (
-              <div key={i} className="p-5 rounded-2xl ring-1 ring-slate-200 bg-white">
-                <div className="flex items-center gap-2 text-emerald-700">
-                  {a.icon}<span className="font-medium">{a.title}</span>
-                </div>
-                <p className="mt-2 text-sm text-slate-600">{a.desc}</p>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* PRODUCTS */}
-        <Section id="products" title="Core Import-Substitute Lines" subtitle="Spec-matched to popular imports, tuned for your GSM, stretch and finish.">
-          <div className="grid md:grid-cols-3 gap-6">
-            {products.map((p, i) => (
-              <div key={i} className="rounded-2xl bg-white ring-1 ring-slate-200 overflow-hidden">
-                <div className="p-5">
-                  <span className="inline-flex text-[11px] px-2 py-1 rounded-full bg-blue-100 text-blue-800">{p.badge}</span>
-                  <h3 className="mt-3 text-lg font-semibold">{p.title}</h3>
-                  <p className="mt-1 text-sm text-slate-600">{p.desc}</p>
-                  <ul className="mt-3 space-y-1 text-sm text-slate-600">
-                    {p.specs.map((s, j) => (
-                      <li key={j} className="flex items-center gap-2"><Ruler className="w-4 h-4 text-slate-400" /> {s}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="px-5 pb-5">
-                  <a href="#enquire" className="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:text-emerald-800">
-                    Request tech sheet <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-sm text-slate-600 text-center">
-            Need custom modulus, shade, or finish? We’ll tune structure, yarn and finishing to your spec.
-          </div>
-        </Section>
-
-        {/* CAPABILITIES (unchanged content, styled) */}
-        <Section id="capabilities" title="Capabilities" subtitle="From concept to continuous production, we deliver stable, repeatable quality.">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f, idx) => (
-              <Feature key={idx} icon={f.icon} title={f.title} desc={f.desc} />
-            ))}
-          </div>
-
-          <div className="mt-10 grid md:grid-cols-3 gap-6">
-            <div className="card">
-              <div className="card-body">
-                <div className="text-lg font-medium mb-2">Materials</div>
-                <div className="text-sm text-slate-600 space-y-2">
-                  <p>Polyester • Nylon • Elastane (Spandex) • Cotton blends</p>
-                  <p>Counts/Denier per design spec; dyed/undyed; high-tenacity on request.</p>
-                </div>
-              </div>
-            </div>
-            <div className="card">
-              <div className="card-body">
-                <div className="text-lg font-medium mb-2">Widths & GSM</div>
-                <div className="text-sm text-slate-600 space-y-2">
-                  <p>Typical width: 36″–72″ (others on request)</p>
-                  <p>GSM: 40–300 depending on construction and yarn mix.</p>
-                </div>
-              </div>
-            </div>
-            <div className="card">
-              <div className="card-body">
-                <div className="text-lg font-medium mb-2">Finishes</div>
-                <div className="text-sm text-slate-600 space-y-2">
-                  <p>Heat setting • Soft handle • Anti-roll edges • Custom packing</p>
-                  <p>Third-party testing available per requirement.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        {/* INDUSTRIES */}
-        <Section id="industries" title="Industries & Applications" subtitle="We tailor constructions for performance across categories.">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {industries.map((it, i) => (
-              <div key={i} className="card">
-                <div className="card-body">
-                  <div className="text-lg font-medium">{it.name}</div>
-                  <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1 mt-2">
-                    {it.points.map((p, j) => <li key={j}>{p}</li>)}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* GALLERY */}
-        <Section id="gallery" title="Gallery" subtitle="Sample meshes and patterns">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {gallery.map((img, i) => (
-              <a key={i} href={img.src} target="_blank" rel="noopener noreferrer" className="aspect-square rounded-2xl border shadow-inner overflow-hidden" title="Open full image">
-                <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover" />
-              </a>
-            ))}
-          </div>
-        </Section>
-
-        {/* CTA STRIP */}
-        <div className="bg-slate-900 text-white">
-          <div className="container-max py-10 md:py-12 grid md:grid-cols-2 gap-6 items-center">
+    <div className="min-h-screen bg-[--bg] text-slate-800" style={{
+      ['--bg']: `linear-gradient(180deg, ${BRAND.brandSoft} 0%, #ffffff 100%)`
+    }}>
+      {/* Top Bar */}
+      <header className="sticky top-0 z-30 backdrop-blur border-b border-slate-200/60 bg-white/70">
+        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl" style={{background: `conic-gradient(from 120deg, ${BRAND.brandAccent}, ${BRAND.brandPrimary})`}} />
             <div>
-              <h3 className="text-2xl font-semibold">Replace imports with dependable local supply</h3>
-              <p className="text-slate-300 mt-1">Get spec-matched samples and pricing for your next drop or contract.</p>
+              <div className="font-semibold">{BRAND.name}</div>
+              <div className="text-xs text-slate-500">{BRAND.tagline}</div>
             </div>
-            <div className="flex md:justify-end">
-              <a href="#enquire" className="btn bg-white text-slate-900 hover:opacity-90 rounded-xl">Start an Enquiry</a>
+          </div>
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            <a href="#products" className="hover:text-slate-900">Products</a>
+            <a href="#capability" className="hover:text-slate-900">Capability</a>
+            <a href="#enquire" className="hover:text-slate-900">RFQ</a>
+            <a href="#contact" className="hover:text-slate-900">Contact</a>
+          </nav>
+          <a href="#enquire" className="btn hidden md:inline-flex">Enquire</a>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:py-20">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <motion.h1 initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} transition={{duration:.5}} className="text-3xl md:text-5xl font-bold leading-tight">
+                EL Warp‑Knitting Tricot —
+                <span className="block" style={{color: BRAND.brandPrimary}}>Made in India, at Scale</span>
+              </motion.h1>
+              <p className="mt-4 text-slate-600 max-w-xl">
+                We manufacture high‑value, flexible, import‑substitute warp‑knit fabrics on modern <b>EL Tricot machines</b>: powernet, shapewear, spacer (3D), sports meshes, tulle, upholstery textures and technical bases.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a href="#products" className="btn">
+                  <Layers className="h-4 w-4 mr-2"/> Explore Products
+                </a>
+                <a href="#enquire" className="btn btn-outline">
+                  <Rocket className="h-4 w-4 mr-2"/> Start an RFQ
+                </a>
+              </div>
+              <div className="mt-6 grid grid-cols-3 gap-3 max-w-md">
+                {[
+                  {icon: <Zap className="h-4 w-4"/>, text: "Quick pattern change (EL)"},
+                  {icon: <GaugeCircle className="h-4 w-4"/>, text: "Fine gauges E28–E36"},
+                  {icon: <Factory className="h-4 w-4"/>, text: "Large‑width production"},
+                ].map((f,i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-[--accent]" style={{['--accent']: BRAND.brandAccent}}>{f.icon}</span>{f.text}</div>
+                ))}
+              </div>
+            </div>
+            <div className="relative">
+              <div className="aspect-[4/3] rounded-3xl border border-slate-200 bg-white shadow-inner p-4 grid place-items-center">
+                <div className="text-center max-w-sm">
+                  <div className="mx-auto h-20 w-20 rounded-2xl mb-4" style={{background: `radial-gradient(60% 60% at 50% 50%, ${BRAND.brandAccent}33, transparent), linear-gradient(135deg, ${BRAND.brandPrimary} 0%, ${BRAND.brandAccent} 100%)`}}/>
+                  <h3 className="font-semibold">EL Electronic Lapping</h3>
+                  <p className="text-sm text-slate-600 mt-1">Software‑defined lapping for meshes, textures and fast design iterations without mechanical pattern discs.</p>
+                </div>
+              </div>
+              <div className="absolute -right-6 -bottom-6 w-40 h-40 rounded-3xl opacity-20" style={{background: `radial-gradient(circle, ${BRAND.brandAccent}, transparent)`}}/>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* CONTACT + ENQUIRY (your Formspree kept) */}
-        <Section id="contact" title="Contact" subtitle="Reach out for sampling, quotations, or collaborations.">
+      {/* Search / Filter */}
+      <section className="mx-auto max-w-7xl px-4" id="products">
+        <Card className="p-4 md:p-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative flex-1 min-w-[220px]">
+              <Search className="h-4 w-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"/>
+              <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Search products, e.g., spacer, powernet, headliner…" className="pl-9 input w-full" />
+            </div>
+            <div className="hidden md:flex items-center gap-2 text-slate-600"><Filter className="h-4 w-4"/> Type to filter catalog</div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Catalog */}
+      <section className="mx-auto max-w-7xl px-4 py-10">
+        <div className="grid gap-10">
+          {filtered.map((cat) => (
+            <div key={cat.key}>
+              <SectionTitle icon={<Layers className="h-5 w-5 text-slate-700"/>} title={cat.title} subtitle={cat.blurb} />
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                {cat.items.map((it, idx) => <ProductCard key={idx} item={it} />)}
+              </div>
+            </div>
+          ))}
+          {!filtered.length && (
+            <Card className="p-10 text-center text-slate-600">No matches. Try keywords like <b>spacer</b>, <b>mesh</b>, <b>powernet</b>, <b>headliner</b>.</Card>
+          )}
+        </div>
+      </section>
+
+      {/* Capability */}
+      <section className="mx-auto max-w-7xl px-4 pb-10" id="capability">
+        <Card className="p-6">
+          <SectionTitle icon={<GaugeCircle className="h-5 w-5 text-slate-700"/>} title="Machine Capability — EL Tricot" subtitle="We operate modern Tricot machines with EL electronic lapping for rapid pattern swaps and consistent quality." />
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-3">
+              {SPECS.map((s, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <CheckCircle2 className="h-5 w-5" style={{color: BRAND.brandAccent}}/>
+                  <div>
+                    <div className="font-medium text-slate-900">{s.label}</div>
+                    <div className="text-sm text-slate-600">{s.value}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-white to-slate-50">
+              <ul className="list-disc pl-5 text-slate-700 space-y-2 text-sm">
+                <li>Meshes with engineered apertures for breathability and laminations.</li>
+                <li>Textured surfaces (crinkle/bubble) using EL lapping patterns.</li>
+                <li>3D spacer constructions for cushioning and airflow.</li>
+                <li>Fine, stable tricot for linings, shapewear and control fabrics.</li>
+              </ul>
+              <a href="#enquire" className="mt-4 inline-flex items-center text-[--primary]" style={{['--primary']: BRAND.brandPrimary}}>
+                Discuss feasibility <ChevronRight className="h-4 w-4 ml-1"/>
+              </a>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* RFQ */}
+      <section className="mx-auto max-w-7xl px-4 pb-10">
+        <RFQ />
+      </section>
+
+      {/* Contact */}
+      <section className="mx-auto max-w-7xl px-4 pb-16" id="contact">
+        <Card className="p-6">
+          <SectionTitle icon={<Phone className="h-5 w-5 text-slate-700"/>} title="Contact" subtitle="We usually respond within one business day." />
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="card">
-              <div className="card-body space-y-3 text-sm">
-                <div className="flex items-start gap-3 text-slate-700">
-                  <MapPin className="h-4 w-4 mt-0.5" />
-                  <span>
-                    <span className="font-medium">Vaishnavi Weave Tex LLP</span><br />
-                    220, Rajhans Ornate,<br />
-                    Parle Point,<br />
-                    Surat (Gujarat) India
-                  </span>
-                </div>
-                <div className="flex items-start gap-3 text-slate-700">
-                  <Phone className="h-4 w-4 mt-0.5" /><span>+91 7567400099</span>
-                </div>
-                <div className="flex items-start gap-3 text-slate-700">
-                  <Mail className="h-4 w-4 mt-0.5" /><span>admin@vaishnaviweavetex.com</span>
-                </div>
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl grid place-items-center" style={{background: `${BRAND.brandAccent}22`, color: BRAND.brandAccent}}>
+                <Phone className="h-5 w-5"/>
+              </div>
+              <div>
+                <div className="text-sm text-slate-500">Phone</div>
+                <div className="font-medium">{CONTACT.phone}</div>
               </div>
             </div>
-
-            {/* Enquiry Card */}
-            <div className="card md:col-span-2" id="enquire">
-              <div className="card-body">
-                {status === 'ok' && (
-                  <div className="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800">
-                    Thank you! Your enquiry has been sent.
-                  </div>
-                )}
-                {status === 'error' && (
-                  <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800">
-                    Sorry, there was an error sending your message. Please try again.
-                  </div>
-                )}
-
-                <form onSubmit={handleEnquirySubmit} className="grid md:grid-cols-2 gap-6">
-                  <input type="text" name="name" placeholder="Your Name" required className="w-full rounded-lg border p-2" />
-                  <input type="email" name="email" placeholder="Your Email" required className="w-full rounded-lg border p-2" />
-                  <input type="tel" name="phone" placeholder="Phone (optional)" className="w-full rounded-lg border p-2" />
-                  <textarea name="message" placeholder="Tell us about the fabric you need (GSM, width, end-use, target price)" required className="w-full rounded-lg border p-2 md:col-span-2" />
-
-                  {/* Spam trap */}
-                  <input type="text" name="company" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
-
-                  <div className="md:col-span-2 flex items-center justify-between">
-                    <div className="text-xs text-slate-500">We’ll reply within 1 business day.</div>
-                    <button type="submit" className="btn btn-primary rounded-xl" disabled={status === 'sending'}>
-                      {status === 'sending' ? 'Sending…' : 'Send Enquiry'}
-                    </button>
-                  </div>
-                </form>
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl grid place-items-center" style={{background: `${BRAND.brandAccent}22`, color: BRAND.brandAccent}}>
+                <Mail className="h-5 w-5"/>
+              </div>
+              <div>
+                <div className="text-sm text-slate-500">Email</div>
+                <div className="font-medium">{CONTACT.email}</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl grid place-items-center" style={{background: `${BRAND.brandAccent}22`, color: BRAND.brandAccent}}>
+                <MapPin className="h-5 w-5"/>
+              </div>
+              <div>
+                <div className="text-sm text-slate-500">Address</div>
+                <div className="font-medium">{CONTACT.address}</div>
               </div>
             </div>
           </div>
-        </Section>
+        </Card>
+      </section>
 
-        {/* FOOTER */}
-        <footer className="border-t">
-          <div className="container-max py-10 text-sm text-slate-600 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-            <div>
-              © {new Date().getFullYear()} Vaishnavi Weave Tex LLP. Mesh, lace, net, spacer fabric — for Lingerie, Sportswear,
-              Automotive Textiles, Curtains, Shoe Fabric, Shirts, Garments.
-            </div>
-            <div className="flex items-center gap-4">
-              <a href="#products" className="hover:text-slate-900">Products</a>
-              <a href="#capabilities" className="hover:text-slate-900">Capabilities</a>
-              <a href="#industries" className="hover:text-slate-900">Industries</a>
-              <a href="#contact" className="hover:text-slate-900">Contact</a>
-            </div>
+      {/* Footer */}
+      <footer className="border-t border-slate-200/70 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8 text-sm text-slate-500 flex flex-col md:flex-row items-center justify-between gap-2">
+          <div>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</div>
+          <div className="flex items-center gap-4">
+            <a href="#enquire" className="hover:text-slate-700">Enquire</a>
+            <a href="#products" className="hover:text-slate-700">Products</a>
+            <a href="#capability" className="hover:text-slate-700">Capability</a>
           </div>
-        </footer>
-      </div>
-    </MotionConfig>
+        </div>
+      </footer>
+
+      {/* Tailwind‑style utility presets for inputs/buttons */}
+      <style>{`
+        .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.625rem 1rem;border:1px solid ${BRAND.brandPrimary}20;background:${BRAND.brandPrimary};color:white;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+        .btn:hover{opacity:.95}
+        .btn-outline{background:transparent;color:${BRAND.brandPrimary};border-color:${BRAND.brandPrimary}33}
+        .input,.textarea{border:1px solid rgb(226 232 240);border-radius:1rem;padding:.625rem .875rem;outline:none;width:100%;background:white}
+        .input:focus,.textarea:focus{border-color:${BRAND.brandAccent}}
+      `}</style>
+    </div>
   )
 }
