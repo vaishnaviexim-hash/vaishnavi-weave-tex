@@ -2,8 +2,8 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.vaishnaviweavetex.com" }],
-      "destination": "https://vaishnaviweavetex.com/$1",
+      "has": [{ "type": "host", "value": "www.vaishnaviweavetech.com" }],
+      "destination": "https://vaishnaviweavetech.com/$1",
       "permanent": true
     }
   ]
