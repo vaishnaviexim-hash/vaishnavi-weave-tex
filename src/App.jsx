@@ -16,7 +16,7 @@ const BRAND = {
 }
 
 // ---------------- Formspree Endpoint ----------------
-const FORM_ENDPOINT = "https://formspree.io/f/xzzadowb" // live
+const FORM_ENDPOINT = "https://formspree.io/f/xjkolyjz" // live
 
 // ---------------- Product Taxonomy (EL Tricot) ----------------
 const CATEGORIES = [
