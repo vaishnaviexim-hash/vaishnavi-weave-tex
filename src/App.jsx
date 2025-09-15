@@ -81,12 +81,21 @@ const SPECS = [
   { label: "Capabilities", value: "EL electronic lapping • meshes • textures • spacer" },
 ]
 
-// ---------------- Contact ----------------
+// -------------- Contact ----------------
 const CONTACT = {
   phone: "+91 7567400099",
   email: "surat@vaishnaviweavetech.com",
-  address: "Icchapore GIDC, Surat, Gujarat, India",
-}
+  website: "https://www.vaishnaviweavetech.com",
+  factory: `A-121/2/A/19,20,21,22
+Near ARC Transport Ichhapor GIDC Estate,
+Surat 394510
+Gujarat, INDIA`,
+  office: `2nd Floor
+220, Rajhans Ornate Mall
+Parle Point
+Surat - 395007
+Gujarat, INDIA`
+};
 
 // ---------------- UI Primitives ----------------
 const Tag = ({ children }) => (
