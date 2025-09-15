@@ -8,7 +8,7 @@ import {
 
 // ---------------- Brand Config ----------------
 const BRAND = {
-  name: "Vaishnavi Weave Tex LLP",
+  name: "Vaishnavi Weavetech LLP",
   tagline: "Import-substitute warp-knit fabrics | Powernet • Shapewear • Spacer | India-made",
   brandPrimary: "#0B2447", // navy
   brandAccent: "#1FA97A",  // emerald
@@ -84,7 +84,7 @@ const SPECS = [
 // ---------------- Contact ----------------
 const CONTACT = {
   phone: "+91 7567400099",
-  email: "admin@vaishnaviweavetex.com",
+  email: "surat@vaishnaviweavetech.com",
   address: "Icchapore GIDC, Surat, Gujarat, India",
 }
 
